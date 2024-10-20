@@ -10,3 +10,5 @@ test fatal log
 2024-10-19 22:29:15.063 DEBUG [file.go:logger.(*FileLogger).Fatal:88] test fatal log
 2024-10-19 22:29:55.924 DEBUG [file_test.go:logger.TestFileLogger:8] test error log
 2024-10-19 22:29:55.925 DEBUG [file_test.go:logger.TestFileLogger:9] test fatal log
+2024-10-20 14:25:45.815 ERROR [testing.go:testing.tRunner:1690] test error log
+2024-10-20 14:25:45.815 FATAL [testing.go:testing.tRunner:1690] test fatal log

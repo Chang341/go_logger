@@ -1,11 +1,11 @@
-package logger
+package go_logger
 
 import "fmt"
 
 var log LogInterface
 
 // name参数传入 file/console 来确定初始化哪个对象
-func Init(name string, config map[string]string) (log LogInterface, err error) {
+func Init(name string, config map[string]string) (err error) {
 	switch name {
 	case "file":
 		log, err = NewFileLoggger(config)

@@ -4,3 +4,4 @@
 2024-10-19 22:20:07.952 DEBUG [file_test.go:logger.TestFileLogger:7] user id[321313] is come from china
 2024-10-19 22:29:14.999 DEBUG [file.go:logger.(*FileLogger).Debug:68] user id[321313] is come from china
 2024-10-19 22:29:55.862 DEBUG [file_test.go:logger.TestFileLogger:7] user id[321313] is come from china
+2024-10-20 14:25:45.739 DEBUG [testing.go:testing.tRunner:1690] user id[321313] is come from china

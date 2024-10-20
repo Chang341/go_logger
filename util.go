@@ -1,4 +1,4 @@
-package logger
+package go_logger
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 )
 
 func GetLineInfo() (fileName string, funcName string, lineNo int) {
-	pc, file, line, ok := runtime.Caller(3)
+	pc, file, line, ok := runtime.Caller(4)
 	if ok {
 		fileName = file
 		funcName = runtime.FuncForPC(pc).Name()
