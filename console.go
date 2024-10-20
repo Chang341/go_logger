@@ -37,7 +37,7 @@ func (c *ConsoleLogger) Debug(format string, args ...interface{}) {
 		return
 	}
 	logData := writeFile(LogLevelDebug, format, args...)
-	fmt.Fprintf(os.Stdout, "%s %s [%s:%s:%d] %s\n",
+	fmt.Fprintf(os.Stdout, LogDataFormat,
 		logData.TimeStr, logData.LevelStr,
 		logData.FileName, logData.FuncName, logData.LineNo, logData.Message)
 }
@@ -47,7 +47,7 @@ func (c *ConsoleLogger) Trace(format string, args ...interface{}) {
 		return
 	}
 	logData := writeFile(LogLevelTrace, format, args...)
-	fmt.Fprintf(os.Stdout, "%s %s [%s:%s:%d] %s\n",
+	fmt.Fprintf(os.Stdout, LogDataFormat,
 		logData.TimeStr, logData.LevelStr,
 		logData.FileName, logData.FuncName, logData.LineNo, logData.Message)
 }
@@ -58,7 +58,7 @@ func (c *ConsoleLogger) Info(format string, args ...interface{}) {
 	}
 	//writeFile(os.Stdout, LogLevelInfo, format, args...)
 	logData := writeFile(LogLevelInfo, format, args...)
-	fmt.Fprintf(os.Stdout, "%s %s [%s:%s:%d] %s\n",
+	fmt.Fprintf(os.Stdout, LogDataFormat,
 		logData.TimeStr, logData.LevelStr,
 		logData.FileName, logData.FuncName, logData.LineNo, logData.Message)
 }
@@ -69,7 +69,7 @@ func (c *ConsoleLogger) Warn(format string, args ...interface{}) {
 	}
 	//writeFile(os.Stdout, LogLevelWarn, format, args...)
 	logData := writeFile(LogLevelWarn, format, args...)
-	fmt.Fprintf(os.Stdout, "%s %s [%s:%s:%d] %s\n",
+	fmt.Fprintf(os.Stdout, LogDataFormat,
 		logData.TimeStr, logData.LevelStr,
 		logData.FileName, logData.FuncName, logData.LineNo, logData.Message)
 }
@@ -80,7 +80,7 @@ func (c *ConsoleLogger) Error(format string, args ...interface{}) {
 	}
 	//writeFile(os.Stdout, LogLevelError, format, args...)
 	logData := writeFile(LogLevelError, format, args...)
-	fmt.Fprintf(os.Stdout, "%s %s [%s:%s:%d] %s\n",
+	fmt.Fprintf(os.Stdout, LogDataFormat,
 		logData.TimeStr, logData.LevelStr,
 		logData.FileName, logData.FuncName, logData.LineNo, logData.Message)
 }
@@ -91,7 +91,7 @@ func (c *ConsoleLogger) Fatal(format string, args ...interface{}) {
 	}
 	//writeFile(os.Stdout, LogLevelFatal, format, args...)
 	logData := writeFile(LogLevelFatal, format, args...)
-	fmt.Fprintf(os.Stdout, "%s %s [%s:%s:%d] %s\n",
+	fmt.Fprintf(os.Stdout, LogDataFormat,
 		logData.TimeStr, logData.LevelStr,
 		logData.FileName, logData.FuncName, logData.LineNo, logData.Message)
 }

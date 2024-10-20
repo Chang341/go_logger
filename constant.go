@@ -9,6 +9,12 @@ const (
 	LogLevelFatal
 )
 
+const (
+	AppLogFormat  = "\"%s/%s.app.log\""
+	ErrLogFormat  = "\"%s/%s.error.log\""
+	LogDataFormat = "%s %s [%s:%s:%d] %s\n"
+)
+
 func getLevelText(level int) string {
 	switch level {
 	case LogLevelDebug:

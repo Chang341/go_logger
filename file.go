@@ -58,7 +58,7 @@ func NewFileLoggger(config map[string]string) (log LogInterface, err error) {
 
 func (f *FileLogger) Init() {
 	// 创建appFile日志文件：存放debug、trace、info级别的日志
-	fileName := fmt.Sprintf("%s/%s.app.log", f.logPath, f.logName)
+	fileName := fmt.Sprintf(AppLogFormat, f.logPath, f.logName)
 	file, err := os.OpenFile(fileName, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0755)
 	if err != nil {
 		panic(fmt.Sprintf("open file %s failed, err:%v", fileName, err))
@@ -66,7 +66,7 @@ func (f *FileLogger) Init() {
 	f.appFile = file
 
 	// 创建errFile日志文件：存放warn、error、fatal级别的日志
-	fileName = fmt.Sprintf("%s/%s.error.log", f.logPath, f.logName)
+	fileName = fmt.Sprintf(ErrLogFormat, f.logPath, f.logName)
 	file, err = os.OpenFile(fileName, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0755)
 	if err != nil {
 		panic(fmt.Sprintf("open file %s failed, err:%v", fileName, err))
@@ -81,7 +81,7 @@ func (f *FileLogger) writeLogAsync() {
 		if f.IsErrLog {
 			file = f.errFile
 		}
-		fmt.Fprintf(file, "%s %s [%s:%s:%d] %s\n",
+		fmt.Fprintf(file, LogDataFormat,
 			logData.TimeStr, logData.LevelStr,
 			logData.FileName, logData.FuncName, logData.LineNo, logData.Message)
 	}
