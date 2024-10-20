@@ -10,9 +10,14 @@ const (
 )
 
 const (
-	AppLogFormat  = "\"%s/%s.app.log\""
-	ErrLogFormat  = "\"%s/%s.error.log\""
+	AppLogFormat  = "%s/%s.app.log"
+	ErrLogFormat  = "%s/%s.error.log"
 	LogDataFormat = "%s %s [%s:%s:%d] %s\n"
+)
+
+const (
+	SplitLogByHour = iota // 默认按照小时拆分
+	SplitLogBySize
 )
 
 func getLevelText(level int) string {

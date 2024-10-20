@@ -4,16 +4,20 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 )
 
 type FileLogger struct {
-	level       int
-	logPath     string
-	logName     string
-	appFile     *os.File
-	errFile     *os.File
-	logDataChal chan *LogData // 声明管道/队列，存放LogData日志数据的指针
-	IsErrLog    bool          // 标识写到哪个log文件中
+	level         int
+	logPath       string
+	logName       string
+	appFile       *os.File
+	errFile       *os.File
+	logDataChal   chan *LogData // 声明管道/队列，存放LogData日志数据的指针
+	IsErrLog      bool          // 标识写到哪个log文件中
+	logSplitType  int           // 日志拆分类型：小时/大小
+	logSplitSize  int64         // 按大小拆分，多大
+	lastSplitHour int           // 上一次拆分的时间
 }
 
 func NewFileLoggger(config map[string]string) (log LogInterface, err error) {
@@ -45,12 +49,36 @@ func NewFileLoggger(config map[string]string) (log LogInterface, err error) {
 	if level == LogLevelWarn || level == LogLevelFatal || level == LogLevelError {
 		isErrLog = true
 	}
+
+	logSplitTypeStr, ok := config["log_split_type"]
+	var logSplitSize int64
+	if !ok {
+		logSplitTypeStr = "hour" // 默认按照小时拆分
+	} else { // 按大小拆分
+		logSplitSizeStr, ok := config["log_split_size"]
+		if !ok {
+			logSplitSizeStr = "104857600" // 100M
+		}
+		logSplitSize, err = strconv.ParseInt(logSplitSizeStr, 10, 64)
+		if err != nil {
+			logSplitSize = 104857600
+		}
+	}
+	var logSplitType int
+	if logSplitTypeStr == "size" {
+		logSplitType = SplitLogBySize
+	} else {
+		logSplitType = SplitLogByHour
+	}
+
 	log = &FileLogger{
-		level:       level,
-		logPath:     logPath,
-		logName:     logName,
-		logDataChal: make(chan *LogData, chanSize),
-		IsErrLog:    isErrLog,
+		level:        level,
+		logPath:      logPath,
+		logName:      logName,
+		logDataChal:  make(chan *LogData, chanSize),
+		IsErrLog:     isErrLog,
+		logSplitType: logSplitType,
+		logSplitSize: logSplitSize,
 	}
 	log.Init()
 	return
@@ -61,6 +89,7 @@ func (f *FileLogger) Init() {
 	fileName := fmt.Sprintf(AppLogFormat, f.logPath, f.logName)
 	file, err := os.OpenFile(fileName, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0755)
 	if err != nil {
+		fmt.Printf("open file %s failed, err:%v", fileName, err)
 		panic(fmt.Sprintf("open file %s failed, err:%v", fileName, err))
 	}
 	f.appFile = file
@@ -81,9 +110,67 @@ func (f *FileLogger) writeLogAsync() {
 		if f.IsErrLog {
 			file = f.errFile
 		}
+		f.checkSplitFile(f.IsErrLog)
 		fmt.Fprintf(file, LogDataFormat,
 			logData.TimeStr, logData.LevelStr,
 			logData.FileName, logData.FuncName, logData.LineNo, logData.Message)
+	}
+}
+
+func (f *FileLogger) checkSplitFile(isErrLog bool) {
+	hour := time.Now().Hour()
+	if f.logSplitType == SplitLogByHour {
+		// 判断是否需要拆分
+		if f.lastSplitHour == hour {
+			return // 不需要拆分
+		} else {
+			// 按照小时拆分
+			f.splitFile(isErrLog)
+			f.lastSplitHour = hour
+		}
+	} else {
+		// 判断是否需要拆分
+		file := f.appFile
+		if isErrLog {
+			file = f.errFile
+		}
+		stat, err := file.Stat()
+		if err != nil {
+			return
+		}
+		fileSize := stat.Size()
+		if fileSize <= f.logSplitSize {
+			return
+		} else {
+			// 按传入大小拆分
+			f.splitFile(isErrLog)
+		}
+	}
+}
+
+func (f *FileLogger) splitFile(isErrLog bool) {
+	now := time.Now()
+	fileName := fmt.Sprintf(AppLogFormat, f.logPath, f.logName)
+	backupFileName := fmt.Sprintf(AppLogFormat+"%04d%02d%02d%02d%02d%02d", f.logPath, f.logName,
+		now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second())
+	file := f.appFile
+	if isErrLog {
+		file = f.errFile
+		fileName = fmt.Sprintf(ErrLogFormat, f.logPath, f.logName)
+		backupFileName = fmt.Sprintf(ErrLogFormat+"%04d%02d%02d%02d%02d%02d", f.logPath, f.logName,
+			now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second())
+	}
+	file.Close()
+	os.Rename(fileName, backupFileName) // 备份
+
+	// 重新开一个文件，并将句柄赋给相应的参数
+	file, err := os.OpenFile(fileName, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0755)
+	if err != nil {
+		return
+	}
+	f.appFile = file
+	if isErrLog {
+		f.errFile = file
 	}
 }
 
