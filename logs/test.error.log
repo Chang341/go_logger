@@ -1,0 +1,12 @@
+test error log
+test fatal log
+test error log
+test fatal log
+test error log
+test fatal log
+test error log
+test fatal log
+2024-10-19 22:29:15.063 DEBUG [file.go:logger.(*FileLogger).Error:84] test error log
+2024-10-19 22:29:15.063 DEBUG [file.go:logger.(*FileLogger).Fatal:88] test fatal log
+2024-10-19 22:29:55.924 DEBUG [file_test.go:logger.TestFileLogger:8] test error log
+2024-10-19 22:29:55.925 DEBUG [file_test.go:logger.TestFileLogger:9] test fatal log

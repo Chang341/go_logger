@@ -1,0 +1,6 @@
+2024-10-19 22:14:02.411 DEBUG D:/go_workspace/utils/logger/util.go:6 go_workspace/utils/logger.GetLineInfo user id[321313] is come from china
+2024-10-19 22:16:11.327 DEBUG util.go:6 logger.GetLineInfo user id[321313] is come from china
+2024-10-19 22:17:46.032 DEBUG [util.go:logger.GetLineInfo:6] user id[321313] is come from china
+2024-10-19 22:20:07.952 DEBUG [file_test.go:logger.TestFileLogger:7] user id[321313] is come from china
+2024-10-19 22:29:14.999 DEBUG [file.go:logger.(*FileLogger).Debug:68] user id[321313] is come from china
+2024-10-19 22:29:55.862 DEBUG [file_test.go:logger.TestFileLogger:7] user id[321313] is come from china
